@@ -1,0 +1,15 @@
+matplotlib
+mypy==0.750  
+numpy
+pytest
+scipy
+sklearn
+tqdm==4.42.1
+torch==1.11.0
+torchvision==1.13.0
+# cleverhans
+
+Pillow==9.1.0
+black
+snakeviz==2.0.1  
+git+https://github.com/RobustBench/robustbench
