@@ -59,5 +59,5 @@ please contact @suraj-srinivas at ssrinivas@seas.harvard.edu or @kylematoba at k
 ## Citation
 Here's a bibtex entry for the paper:
 ```
-
 ```
+
