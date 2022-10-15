@@ -70,6 +70,10 @@ approxs = {
 
 ablations = {
     # baselines and ablations
+    'resnet18lowbeta': dict(func=models.resnet_spectral.resnet18,
+                            conv_wrapper=None,
+                            activation_name='low_softplus',
+                            clip_bn=False),
 }
 
 architecture_config = dict()

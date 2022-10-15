@@ -115,6 +115,8 @@ def get_activation_obj(activation_name: str) -> torch.nn.Module:
         activation_obj = models.psoftplus.ParametricSoftplus
     elif activation_name == 'softplus':
         activation_obj = functools.partial(torch.nn.Softplus, beta=1e3)
+    elif activation_name == 'low_softplus':
+        activation_obj = functools.partial(torch.nn.Softplus, beta=10)
     else:
         raise ValueError(f"unknown activation_name {activation_name}")
     return activation_obj
