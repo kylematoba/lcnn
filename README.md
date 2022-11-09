@@ -20,10 +20,9 @@ Torch >= 1.11.0 is a requirement -- due to a change in the way that the paramete
 
 ## Trainable centered softplus, clipped batchnorm, "real" spectral normalization. 
 You might just be interested in the three main architectural novelties:
- 1. [Trainable centered softplus](abc.com)
- 2. [Clipped batchnorm](abc.com)
- 3. ["Real spectral normalization"](abc.com)
-  - (this is a minimally-modified version of the original, at https://github.com/uclaopt/Provable_Plug_and_Play/tree/master/training/model)
+ 1. [Trainable centered softplus](https://github.com/kylematoba/lcnn/blob/main/models/psoftplus.py)
+ 2. [Clipped batchnorm](https://github.com/kylematoba/lcnn/blob/main/models/layers.py#L96)
+ 3. ["Real spectral normalization"](https://github.com/kylematoba/lcnn/blob/main/models/conv_spectral_norm.py) (this is a minimally-modified version of the original, at https://github.com/uclaopt/Provable_Plug_and_Play/tree/master/training/model)
 
 ## Training models 
 The main entry point is `train_curvature.py`. Table 1 of the paper can be generated via: 
@@ -35,7 +34,7 @@ python3 train_curvature.py --regularizer=gnorm --model-arch=resnet18 --dataset=c
 python3 train_curvature.py --regularizer=curvature_and_gnorm --model-arch=resnet18smoothconv --dataset=cifar100  # LCNNs + GradReg
 
 python3 train_curvature.py --regularizer=cure --model-arch=resnet18 --dataset=cifar100  # CURE
-python3 train_curvature.py ????? # Softplus + Wt. Decay
+python3 train_curvature.py --model-arch=resnet18lowbeta --dataset=cifar100  # Softplus + Wt. Decay
 python3 train_curvature.py --model-arch=resnet18 --dataset=cifar100  --adv_attack l2_pgd_3_100000  # Adversarial Training
 ```
 
