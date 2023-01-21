@@ -1,11 +1,8 @@
-# Code to accompany "Efficient Training of Low-Curvature Neural Networks"
+# Low Curvature Neural Networks
 
-by Suraj Srinivas, Kyle Matoba, Himabindu Lakkaraju, and François Fleuret.
+This is the reference code for the NeurIPS 2022 paper [*Efficient Training of Low-Curvature Neural Networks*](https://openreview.net/forum?id=2B2xIJ299rx) by Suraj Srinivas, Kyle Matoba, Himabindu Lakkaraju, & François Fleuret
 
-NeurIPS 2022.  
-
-The [appendix](https://openreview.net/attachment?id=2B2xIJ299rx&name=supplementary_material) 
-contains further proofs and analysis. 
+---
 
 ## Configuration
 
@@ -14,15 +11,14 @@ written, etc. in `path_config.py` (we've done it by setting the environment
 variables `CURVATURE_HOME` and `DATA_HOME`, because that's convenient for our
 setup, but don't feel obliged to follow it).
 
-There are no dependencies beyond those in the `requirements.txt`. 
 
-Torch >= 1.11.0 is a requirement -- due to a change in the way that the parameterization is handled internally.
+## Curvature-regularizing layers 
+In case you are just interested in our architectural novelties, you can find them defined here
 
-## Trainable centered softplus, clipped batchnorm, "real" spectral normalization. 
-You might just be interested in the three main architectural novelties:
- 1. [Trainable centered softplus](https://github.com/kylematoba/lcnn/blob/main/models/psoftplus.py)
- 2. [Clipped batchnorm](https://github.com/kylematoba/lcnn/blob/main/models/layers.py#L96)
- 3. ["Real spectral normalization"](https://github.com/kylematoba/lcnn/blob/main/models/conv_spectral_norm.py) (this is a minimally-modified version of the original, at https://github.com/uclaopt/Provable_Plug_and_Play/tree/master/training/model)
+ 1. [$\beta$-centered softplus](https://github.com/kylematoba/lcnn/blob/main/models/psoftplus.py)
+ 2. [$\gamma$-Lipschitz batchnorm](https://github.com/kylematoba/lcnn/blob/main/models/layers.py#L96)
+
+
 
 ## Training models 
 The main entry point is `train_curvature.py`. Table 1 of the paper can be generated via: 
@@ -40,26 +36,25 @@ python3 train_curvature.py --model-arch=resnet18 --dataset=cifar100  --adv_attac
 
 Other options, e.g. other datasets, architectures, etc. are further discussed at `python3 train_curvature.py --help`.
 
-Note that currently (October 2022 / cleverhans af09028a9b1307a432bca01f49e9c3568251aa8c)
+**Note about Cleverhans:** Note that currently (October 2022)
 PGD is broken for L2 attacks due to this inplace operation:
 https://github.com/cleverhans-lab/cleverhans/blob/af09028a9b1307a432bca01f49e9c3568251aa8c/cleverhans/torch/utils.py#L38.
 In order to run the experiment with PGD, we monkey-patched this multiply to not be in-place.
 
-## Other experiments
-To keep it simple, we have not uploaded all of the code to reproduce all of our experiments. 
-If you're interested in understanding the provenance of some number in the paper that is not in Table 1
-please contact Suraj or Kyle at the addresses given in [the paper](https://arxiv.org/abs/2206.07144).
 
-## Citation
-Here's a bibtex entry for the paper:
+---
+## Research
+If you found our work helpful for your research, please do consider citing us:
 
 ```
-@misc{Srinivas2022,
-  doi = {10.48550/ARXIV.2206.07144},
-  url = {https://arxiv.org/abs/2206.07144},
-  author = {Srinivas, Suraj and Matoba, Kyle and Lakkaraju, Himabindu and Fleuret, Francois},
-  title = {Flatten the Curve: Efficiently Training Low-Curvature Neural Networks},
-  year = {2022},
+@inproceedings{
+srinivas2022efficient,
+title={Efficient Training of Low-Curvature Neural Networks},
+author={Suraj Srinivas and Kyle Matoba and Himabindu Lakkaraju and Fran{\c{c}}ois Fleuret},
+booktitle={Advances in Neural Information Processing Systems},
+editor={Alice H. Oh and Alekh Agarwal and Danielle Belgrave and Kyunghyun Cho},
+year={2022},
+url={https://openreview.net/forum?id=2B2xIJ299rx}
 }
 
 ```
