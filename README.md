@@ -2,7 +2,6 @@
 
 This is the reference code for the NeurIPS 2022 paper [*Efficient Training of Low-Curvature Neural Networks*](https://openreview.net/forum?id=2B2xIJ299rx) by Suraj Srinivas, Kyle Matoba, Himabindu Lakkaraju, & François Fleuret
 
----
 
 ## Configuration
 
@@ -13,28 +12,32 @@ setup, but don't feel obliged to follow it).
 
 
 ## Curvature-regularizing layers 
-In case you are just interested in our architectural novelties, you can find them defined here
-
- 1. [$\beta$-centered softplus](https://github.com/kylematoba/lcnn/blob/main/models/psoftplus.py)
- 2. [$\gamma$-Lipschitz batchnorm](https://github.com/kylematoba/lcnn/blob/main/models/layers.py#L96)
-
+In case you are just interested in our architectural novelties, you can find them defined here 
+- [$\beta$-centered softplus](https://github.com/kylematoba/lcnn/blob/main/models/psoftplus.py)
+- [$\gamma$-Lipschitz batchnorm](https://github.com/kylematoba/lcnn/blob/main/models/layers.py#L96)
 
 
-## Training models 
-The main entry point is `train_curvature.py`. Table 1 of the paper can be generated via: 
+## Training LCNNs 
+To train an LCNN with gradient norm regularization, just run:
 
 ```
-python3 train_curvature.py --model-arch=resnet18 --dataset=cifar100  # Standard
-python3 train_curvature.py --regularizer=curvature_proxy --model-arch=resnet18smoothconv --dataset=cifar100  # LCNNs
-python3 train_curvature.py --regularizer=gnorm --model-arch=resnet18 --dataset=cifar100  # GradReg
-python3 train_curvature.py --regularizer=curvature_and_gnorm --model-arch=resnet18smoothconv --dataset=cifar100  # LCNNs + GradReg
-
-python3 train_curvature.py --regularizer=cure --model-arch=resnet18 --dataset=cifar100  # CURE
-python3 train_curvature.py --model-arch=resnet18lowbeta --dataset=cifar100  # Softplus + Wt. Decay
-python3 train_curvature.py --model-arch=resnet18 --dataset=cifar100  --adv_attack l2_pgd_3_100000  # Adversarial Training
+python train_curvature.py 
+      --model-arch=resnet18smoothconv 
+      --regularizer=curvature_and_gnorm 
+      --dataset=cifar100
 ```
 
-Other options, e.g. other datasets, architectures, etc. are further discussed at `python3 train_curvature.py --help`.
+Or to just train a vanilla LCNN, run: 
+
+```
+python train_curvature.py 
+      --model-arch=resnet18smoothconv 
+      --regularizer=curvature_proxy 
+      --dataset=cifar100
+```
+
+Other options, e.g. other datasets, architectures, etc. are further discussed at `python3 train_curvature.py --help`. Also look at `experiments.sh` for examples of how to train other baseline models.
+
 
 **Note about Cleverhans:** Note that currently (October 2022)
 PGD is broken for L2 attacks due to this inplace operation:
@@ -42,7 +45,6 @@ https://github.com/cleverhans-lab/cleverhans/blob/af09028a9b1307a432bca01f49e9c3
 In order to run the experiment with PGD, we monkey-patched this multiply to not be in-place.
 
 
----
 ## Research
 If you found our work helpful for your research, please do consider citing us:
 
