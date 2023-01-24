@@ -1,8 +1,9 @@
 # Training Low Curvature Neural Networks
 
-This is the reference implementation of the NeurIPS 2022 paper [*Efficient Training of Low-Curvature Neural Networks*](https://openreview.net/forum?id=2B2xIJ299rx) by Suraj Srinivas, Kyle Matoba, Himabindu Lakkaraju, & François Fleuret.
+This is the reference implementation of the NeurIPS 2022 paper [*Efficient Training of Low-Curvature Neural Networks*](https://openreview.net/forum?id=2B2xIJ299rx) by <ins>Suraj Srinivas*</ins>, <ins>Kyle Matoba*</ins>, Himabindu Lakkaraju, & François Fleuret. 
 
-This codebase contains (a) model definitions and regularizers to train LCNNs, and (b) code to evaluate model curvature of trained models.
+The codebase contains **(a)** architectures and regularizers to train LCNNs, and **(b)** code to estimate curvature of trained models.
+
 
 ## Training LCNNs 
 To train an LCNN with gradient norm regularization, use:
@@ -35,7 +36,8 @@ For other options, e.g. other datasets, architectures, etc, try `python train_mo
 - `CurvatureRegularizedLoss` - CELoss + curvature regularization 
 - `CurvatureAndGradientRegularizedLoss` - CELoss + curvature regularization + gradient norm regularization
 
-**Datasets** currently included are `cifar10`, `cifar100` and `svhn`
+**Datasets** included are `cifar10`, `cifar100` and `svhn`
+
 
 ## Estimate Curvature
 To estimate the empirical curvature of a model on a dataset using the power method, try 
@@ -51,6 +53,7 @@ python estimate_curvature.py
 
 Note: for fast computation, we use a small fraction of the dataset specified in `data-fraction`
 
+
 ## Minimal Recipe
 To build LCNNs of your own, you can try a minimal recipe we found to work on image datasets:
 1. Build models using [ $\beta$-centered softplus](https://github.com/kylematoba/lcnn/blob/main/models/psoftplus.py) 
@@ -58,6 +61,8 @@ To build LCNNs of your own, you can try a minimal recipe we found to work on ima
 3. Train models using [gradient norm regularization](https://github.com/kylematoba/lcnn/blob/main/regularized_loss.py#L29)
 
 However, note that we mention this only for convience, and that this recipe is not supported by our theory, indicating that it may break for exotic architectures or domains.
+
+
 
 ## Research
 If you found our work helpful for your research, please do consider citing us:
