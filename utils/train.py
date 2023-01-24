@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torchvision import transforms
 import torchvision
 
-import path_config
+import utils.path_config as path_config
 
 
 def _get_cifar_trainloader(data_dir: str,
@@ -55,16 +55,6 @@ def _get_svhn_trainloader(data_dir: str,
     train_loader = torch.utils.data.DataLoader(train_dataset,
                                                batch_size=batch_size,
                                                shuffle=True)
-    # if False:
-    #     x, y = next(iter(train_loader))
-    #     # row = 11
-    #     row = 1
-    #     # to_plot = x[row].numpy().swapaxes(0, 2).transpose(0, 1)
-    #     to_plot = x[row].numpy().transpose(1, 2, 0)
-    #
-    #     plt.figure(figsize=(3, 3))
-    #     plt.imshow(to_plot)
-    #     plt.title(y[row])
     return train_loader
 
 
@@ -124,16 +114,13 @@ def get_num_classes(dataset_name: str) -> int:
 
 def test(model: torch.nn.Module,
          dataloader: torch.utils.data.DataLoader,
-         device: torch.device,
-         dtype: Optional[torch.dtype]) -> Tuple[float, int]:
+         device: torch.device) -> Tuple[float, int]:
     model.eval()
     total_loss = 0
     correct = 0
     with torch.no_grad():
         for data, target in dataloader:
-            data, target = data.to(device).to(dtype), target.to(device)
-            if dtype:
-                data = data.to(dtype)
+            data, target = data.to(device), target.to(device)
             out = model(data)
             assert not torch.isnan(out).any()
 
@@ -142,4 +129,7 @@ def test(model: torch.nn.Module,
             pred = output.data.max(1, keepdim=True)[1]  # get the index of the max log-probability
             # print(pred)
             correct += pred.eq(target.data.view_as(pred)).cpu().sum().item()
-    return total_loss, correct
+
+        average_loss = total_loss / len(dataloader.dataset)
+        acc = 100. * correct / len(dataloader.dataset)
+    return average_loss, acc
