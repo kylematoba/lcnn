@@ -107,12 +107,12 @@ def main():
     parser.add_argument("--momentum", 
                         type=float, 
                         default=0.9,
-                        help="momentum to use w/ sgd (ignored for adam)")
+                        help="momentum to use w/ sgd")
     
-    parser.add_argument("--reg-constant", 
+    parser.add_argument("--reg-gnorm", 
                         type=float, 
                         default=1e-3,
-                        help="smoothness regularization strength")
+                        help="gradnorm regularization strength")
 
     parser.add_argument("--reg-beta", 
                         type=float, 
@@ -232,9 +232,9 @@ def get_optimizer_scheduler(args, model: torch.nn.Module) -> torch.optim.Optimiz
 def get_penalty(args):
     # Various losses as a dictionary
     loss_dict = {
-    'gnorm': partial(GradNormRegularizedLoss, reg_constant=args.reg_constant),
+    'gnorm': partial(GradNormRegularizedLoss, reg_constant=args.reg_gnorm),
     'curvature': partial(CurvatureRegularizedLoss, reg_constants=(args.reg_beta, args.reg_gamma)),
-    'curvature_and_gnorm': partial(CurvatureAndGradientRegularizedLoss, reg_constants=(args.reg_beta, args.reg_gamma, args.reg_constant))
+    'curvature_and_gnorm': partial(CurvatureAndGradientRegularizedLoss, reg_constants=(args.reg_beta, args.reg_gamma, args.reg_gnorm))
     }
     
     loss_fun = loss_dict.get(args.regularizer, CELoss)

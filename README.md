@@ -17,19 +17,31 @@ python train_models.py
 Or to just train a vanilla LCNN, use: 
 
 ```
-python train_curvature.py 
+python train_models.py 
       --model-arch=resnet18lcnn 
       --regularizer=curvature 
       --dataset=cifar100
 ```
 
-For other options, e.g. other datasets, architectures, etc, try `python3 train_curvature.py --help`. 
+For other options, e.g. other datasets, architectures, etc, try `python train_models.py --help`. 
+
+**Architectures** are defined in `models\model_selector.py`, and include
+- `resnet18, resnet34, vgg11` - standard models with softplus non-linearity 
+- `resnet18lcnn, resnet34lcnn, vgg11lcnn` - LCNN variants of standard models
+
+**Regularized loss functions** are defined in `regularized_loss.py`, and include
+- `CELoss` - standard cross-entropy loss
+- `GradNormRegularizedLoss` - CELoss + gradient norm regularization
+- `CurvatureRegularizedLoss` - CELoss + curvature regularization 
+- `CurvatureAndGradientRegularizedLoss` - CELoss + curvature regularization + gradient norm regularization
+
+**Datasets** currently included are `cifar10`, `cifar100` and `svhn`
 
 ## Estimate Curvature
 To estimate the empirical curvature of a model on a dataset using the power method, try 
 
 ```
-python evaluate.py 
+python estimate_curvature.py 
     --model-arch=resnet18lcnn
     --model-filename=<type-model-filename-with-path-here>
     --dataset=cifar100
