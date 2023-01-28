@@ -79,9 +79,9 @@ def measure_curvature(model: torch.nn.Module,
     model.eval()
     datasize = int(data_fraction * len(dataloader.dataset))
     max_batches = int(datasize / batch_size)
-    curvature_agg = torch.empty(size=(datasize,))
-    grad_agg = torch.empty(size=(datasize,))
-    hess_agg = torch.empty(size=(datasize,))
+    curvature_agg = torch.zeros(size=(datasize,))
+    grad_agg = torch.zeros(size=(datasize,))
+    hess_agg = torch.zeros(size=(datasize,))
 
     for idx, (data, target) in enumerate(dataloader):
         data, target = data.to(device).requires_grad_(), target.to(device)
@@ -182,6 +182,7 @@ def get_model_and_datasets(args):
     #Load Model
     model = models.model_selector.model_architecture[args.model_arch](num_classes)
     model.load_state_dict(torch.load(args.model_filename), strict=True)
+    model.to(device)
 
     return model, train_loader, test_loader, device
 
