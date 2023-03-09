@@ -9,9 +9,8 @@ import random
 import os
 import logging
 import datetime as dt
-
 from functools import partial
-from typing import Callable
+from typing import Callable, Tuple
 
 import torch
 
@@ -37,6 +36,7 @@ logger.setLevel(logging_level)
 standard_streamhandler = utils.logging.get_standard_streamhandler()
 logger.addHandler(standard_streamhandler)
 # End Logging
+
 
 def train(model: torch.nn.Module,
           train_loader: torch.utils.data.DataLoader,
@@ -70,24 +70,20 @@ def train(model: torch.nn.Module,
                 for index, module in enumerate(bn_layers):
                     logger.debug("bn_lipschitz{} : {:.4f}".format(index, module.log_lipschitz.exp().data.item()))
 
+
 def main():
-
     parser = argparse.ArgumentParser(description='Experiment arguments')
-
     parser.add_argument('--model-arch',
                         default="resnet18", 
                         help='What architecture to use?')
-
     parser.add_argument('--regularizer',
                         choices=['gnorm', 'curvature', 'curvature_and_gnorm'],
                         help='Which regularizer to use? Default: No regularizer')
-
-    parser.add_argument('--dataset', 
+    parser.add_argument('--dataset',
                         choices=['cifar10', 'cifar100', "svhn"],
                         default='cifar100',
                         help='Which dataset to use?')
-
-    parser.add_argument("--num-epochs", 
+    parser.add_argument("--num-epochs",
                         type=int, 
                         default=200)
     
@@ -127,6 +123,7 @@ def main():
     parser.add_argument("--prng_seed", 
                         type=int, 
                         default=1729)
+    parser.add_argument("--strong_determinism_wanted", action=argparse.BooleanOptionalAction, default=True)
 
     args = parser.parse_args()
 
@@ -153,7 +150,12 @@ def get_model_and_datasets(args):
     torch.manual_seed(prng_seed)
     random.seed(prng_seed)
 
-    # Device selection   
+    if args.strong_determinism_wanted:
+         torch.use_deterministic_algorithms(True)
+         # https://docs.nvidia.com/cuda/cublas/index.html#cublasApi_reproducibility
+         os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
+
+    # Device selection
     cuda_available = torch.cuda.is_available()
     device = torch.device("cuda" if cuda_available else "cpu")    
     if cuda_available:
@@ -179,8 +181,8 @@ def get_model_and_datasets(args):
     return model, train_loader, test_loader, device
 
 
-
-def get_optimizer_scheduler(args, model: torch.nn.Module) -> torch.optim.Optimizer:
+def get_optimizer_scheduler(args, model: torch.nn.Module) -> Tuple[torch.optim.Optimizer,
+                                                                   torch.optim.lr_scheduler.MultiStepLR]:
     # Initialize optimizer and scheduler
     
     if ('lcnn' in args.model_arch):

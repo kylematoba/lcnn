@@ -94,7 +94,7 @@ class ConvBNBlock(torch.nn.Module):
                 self.init_convspectralnorm = False
         x = self.conv(x)
         if self.clip_bn:
-            scale = torch.min((self.bn.running_var + 1e-5) ** .5)
+            scale = torch.min((self.bn.running_var + self.bn.eps) ** .5)
             one_lipschitz_part = self.bn(x) * scale
             x = one_lipschitz_part * torch.minimum(1 / scale, self.log_lipschitz.exp())
         else:
