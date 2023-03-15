@@ -154,8 +154,9 @@ def main():
 
     return args
 
+
 def get_model_and_datasets(args):
-     # Random seeds
+    # Random seeds
     prng_seed = args.prng_seed
     torch.manual_seed(prng_seed)
     random.seed(prng_seed)
@@ -179,12 +180,16 @@ def get_model_and_datasets(args):
     train_loader, test_loader = utils.train.get_dataloaders(args.dataset, args.batch_size)
     num_classes = utils.train.get_num_classes(args.dataset)
 
-    #Load Model
+    # Load Model
     model = models.model_selector.model_architecture[args.model_arch](num_classes)
+    # Initialize needed parameterizations to insure that state dict loads properly
+    x, y = next(iter(train_loader))
+    model(x)
     model.load_state_dict(torch.load(args.model_filename), strict=True)
     model.to(device)
 
     return model, train_loader, test_loader, device
+
 
 if __name__ == "__main__":
     args = main()
